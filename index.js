@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 app.use(cors())
 
@@ -38,8 +40,10 @@ app.get('/',morgan('tiny'), (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/persons',morgan('tiny'), (request, response) => {
-  response.json(persons)
+app.get('/api/persons', morgan('tiny'), (request, response) => {
+  Person.find({}).then(person => {
+    response.json(person)
+  })
 })
 
 app.get('/info',morgan('tiny'), (request, response) => {
@@ -50,14 +54,18 @@ app.get('/info',morgan('tiny'), (request, response) => {
 })
 
 app.get('/api/persons/:id',morgan('tiny'), (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
-  
+  // const id = Number(request.params.id)
+  // const person = persons.find(person => person.id === id)
+  // if (person) {
+  //   response.json(person)
+  // } else {
+  //   response.status(404).end()
+  // }
+  app.get('/api/notes/:id', (request, response) => {
+    Note.findById(request.params.id).then(note => {
+      response.json(note)
+    })
+  })
 })
 
 app.delete('/api/persons/:id',morgan('tiny'), (request, response) => {
@@ -82,19 +90,19 @@ app.post('/api/persons', morgan(':method :url :status :res[content-length] - :re
         })
     }
 
-    const person = {
-        id: (Math.floor(Math.random() * 10000)),  
+    const person = new Person ({ 
         name: body.name,
-        number: body.number,
-        
-    }
+        number: body.number
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    // persons = persons.concat(person)
+    person.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
+    
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
