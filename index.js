@@ -11,28 +11,28 @@ app.use(cors())
 
 morgan.token('body', (req) => JSON.stringify(req.body))
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+// let persons = [
+//   {
+//     'id': 1,
+//     'name': 'Arto Hellas',
+//     'number': '040-123456'
+//   },
+//   {
+//     'id': 2,
+//     'name': 'Ada Lovelace',
+//     'number': '39-44-5323523'
+//   },
+//   {
+//     'id': 3,
+//     'name': 'Dan Abramov',
+//     'number': '12-43-234345'
+//   },
+//   {
+//     'id': 4,
+//     'name': 'Mary Poppendieck',
+//     'number': '39-23-6423122'
+//   }
+// ]
 
 app.get('/',morgan('tiny'), (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -69,37 +69,37 @@ app.get('/api/persons/:id', morgan('tiny'), (request, response, next) => {
 
 app.delete('/api/persons/:id', morgan('tiny'), (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
-  
+
 app.post('/api/persons', morgan(':method :url :status :res[content-length] - :response-time ms :body'), (request, response, next) => {
-    const body = request.body
+  const body = request.body
 
-    // if (!body.name || !body.number) {
-    //     return response.status(400).json({ 
-    //     error: 'missing name or number' 
-    //     })
-    // }
+  // if (!body.name || !body.number) {
+  //     return response.status(400).json({
+  //     error: 'missing name or number'
+  //     })
+  // }
 
-    // if (persons.map((person) => person.name).includes(body.name)) {
-    //     return response.status(400).json({ 
-    //     error: 'name must be unique' 
-    //     })
-    // }
+  // if (persons.map((person) => person.name).includes(body.name)) {
+  //     return response.status(400).json({
+  //     error: 'name must be unique'
+  //     })
+  // }
 
-    const person = new Person ({ 
-        name: body.name,
-        number: body.number
-    })
+  const person = new Person ({
+    name: body.name,
+    number: body.number
+  })
 
-    person.save().then(savedPerson => {
-      response.json(savedPerson)
-    })
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
     .catch(error => next(error))
-    
+
 })
 
 app.put('/api/persons/:id', (request, response, next) => {

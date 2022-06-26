@@ -18,16 +18,16 @@ const Person = mongoose.model('Person', personSchema)
 
 
 if (process.argv.length > 4){
-    mongoose
+  mongoose
     .connect(url)
-    .then((result) => {
+    .then(() => {
       console.log('connected')
 
       const person = new Person({
         name: process.argv[3],
         number: process.argv[4]
       })
-  
+
       return person.save()
     })
     .then(() => {
@@ -38,17 +38,17 @@ if (process.argv.length > 4){
 }
 
 else if (process.argv.length < 4){
-    mongoose
+  mongoose
     .connect(url)
-    .then((result) => {
-        console.log('phonebook:')
+    .then(() => {
+      console.log('phonebook:')
 
-        Person.find({}).then(result => {
-            result.forEach(person => {
-            console.log(person)
-            })
-            mongoose.connection.close()
+      Person.find({}).then(result => {
+        result.forEach(person => {
+          console.log(person)
         })
+        mongoose.connection.close()
+      })
     })
-    .catch((err) => console.log(err))    
+    .catch((err) => console.log(err))
 }
